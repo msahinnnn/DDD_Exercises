@@ -1,4 +1,6 @@
-﻿using Order.Domain.SeedWork;
+﻿using MediatR;
+using Order.Domain.AggregateModels.Events;
+using Order.Domain.SeedWork;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +11,8 @@ namespace Order.Domain.AggregateModels.OrderModels
 {
     public class Order: BaseEntity, IAggregateRoot
     {
+
+
         public DateTime OrderDate { get; private set; }
         public string Description { get; private set; }
         public int BuyerId { get; private set; }
@@ -21,13 +25,13 @@ namespace Order.Domain.AggregateModels.OrderModels
         public Order(DateTime orderDate, string description, int buyerId, string orderStatus, Address address, ICollection<OrderItem> orderItems)
         {
             if (orderDate < DateTime.Now)
-                throw new Exception("Order date must be greater than now");
+                throw new Exception("Order date must be greater than now.");
 
             if (address.City == "")
-                throw new Exception("City cannot be empty");
+                throw new Exception("City cannot be empty.");
 
             if (address.Country == "")
-                throw new Exception("Country cannot be empty");
+                throw new Exception("Country cannot be empty.");
 
             OrderDate = orderDate;
             Description = description;
@@ -35,6 +39,8 @@ namespace Order.Domain.AggregateModels.OrderModels
             OrderStatus = orderStatus;
             Address = address;
             OrderItems = orderItems;
+
+            AddDomainEvent(new OrderStartedDomainEvent("", "", this));
         }
 
         public void AddOrderItem(int quantity, decimal price, int productId)

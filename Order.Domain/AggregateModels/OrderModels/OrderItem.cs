@@ -16,6 +16,12 @@ namespace Order.Domain.AggregateModels.OrderModels
 
         public OrderItem(int quantity, decimal price, int productId)
         {
+            if (quantity < 0)
+                throw new Exception("Quantity must be greater than zero.");
+
+            if (price < 10)
+                throw new Exception("Price must be at least 10$");
+
             Quantity = quantity;
             Price = price;
             ProductId = productId;
